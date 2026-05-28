@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.4.5</version>
         <relativePath/> </parent>
 
     <groupId>com.company</groupId>
@@ -26,8 +26,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <spring-framework.version>6.1.15</spring-framework.version>
     </properties>
 
     <dependencyManagement>
@@ -41,6 +39,18 @@
                 <groupId>com.company</groupId>
                 <artifactId>infrastructure</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.7.11</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.84</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
