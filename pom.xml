@@ -27,13 +27,19 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
         <tomcat.version>10.1.55</tomcat.version>
-        <spring-framework.version>6.2.11</spring-framework.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>6.2.11</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.company</groupId>
                 <artifactId>domain</artifactId>
@@ -50,7 +56,6 @@
                 <artifactId>postgresql</artifactId>
                 <version>42.7.11</version>
             </dependency>
-
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
