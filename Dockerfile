@@ -1,7 +1,8 @@
 # ==========================================
 # STAGE 1: JLink Custom JVM Builder
 # ==========================================
-FROM eclipse-temurin:21-jdk-alpine3.20 AS jre-builder
+# We use the standard Eclipse Temurin tag. This OS layer is discarded after build.
+FROM eclipse-temurin:21-jdk-alpine AS jre-builder
 
 RUN $JAVA_HOME/bin/jlink \
     --add-modules java.base,java.logging,java.naming,java.sql,java.xml,java.management,java.security.jgss,java.instrument,java.desktop,java.prefs,jdk.crypto.ec,jdk.unsupported \
@@ -14,7 +15,8 @@ RUN $JAVA_HOME/bin/jlink \
 # ==========================================
 # STAGE 2: Spring Boot Layer Extractor
 # ==========================================
-FROM eclipse-temurin:21-jre-alpine3.20 AS layer-extractor
+# This OS layer is also discarded after extraction.
+FROM eclipse-temurin:21-jre-alpine AS layer-extractor
 WORKDIR /build
 COPY bootstrap/target/bootstrap-1.0.0.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
@@ -22,12 +24,15 @@ RUN java -Djarmode=layertools -jar app.jar extract
 # ==========================================
 # STAGE 3: Production Micro-Image
 # ==========================================
+# THIS is the only OS layer that goes to production and gets scanned by Trivy.
+# We explicitly lock it to the secure Alpine 3.20 baseline.
 FROM alpine:3.20
 
 ENV JAVA_HOME=/jre
 ENV PATH="$JAVA_HOME/bin:$PATH"
 COPY --from=jre-builder /custom-jre $JAVA_HOME
 
+# Enterprise Security: Run as a non-root user
 RUN addgroup -S enterprise && adduser -S spring -G enterprise
 USER spring:enterprise
 WORKDIR /app
