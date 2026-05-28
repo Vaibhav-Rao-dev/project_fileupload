@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  
+spring:
+  application:
+    name: enterprise-storage-api
+  threads:
+    virtual:
+      enabled: true # The magic switch: Enables Project Loom Virtual Threads for Tomcat
+  datasource:
+    url: jdbc:postgresql://localhost:5432/enterprise_db
+    username: local_dev
+    password: local_password
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate # Strictly enforce that Flyway handles our schema
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: enterprise-chunks

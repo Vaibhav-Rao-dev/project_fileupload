@@ -1,0 +1,3 @@
+rootProject.name = 'enterprise-api-parent'
+include 'domain', 'infrastructure', 'presentation'
+include 'bootstrap'

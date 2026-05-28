@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+allprojects {
+    group = 'com.company'
+    version = '1.0.0'
+    
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    
+    java {
+        // Enforce native Java 26 runtime structures
+        sourceCompatibility = JavaVersion.VERSION_26
+        targetCompatibility = JavaVersion.VERSION_26
+    }
+    
+    ext {
+        jakartaVersion = '11.0.0-M1'
+        postgresVersion = '42.7.3'
+        jedisVersion = '5.1.2'
+        minioVersion = '8.5.10'
+        flywayVersion = '10.11.0'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

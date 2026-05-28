@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: enterprise-postgres
+    environment:
+      POSTGRES_USER: local_dev
+      POSTGRES_PASSWORD: local_password
+      POSTGRES_DB: enterprise_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U local_dev -d enterprise_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: enterprise-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@enterprise.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  minio:
+    image: minio/minio:RELEASE.2023-12-14T18-51-57Z
+    container_name: enterprise-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API Port
+      - "9001:9001" # Web GUI Port
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:

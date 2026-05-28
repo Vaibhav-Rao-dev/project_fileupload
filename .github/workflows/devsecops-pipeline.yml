@@ -1,0 +1,57 @@
+name: Enterprise DevSecOps Pipeline
+
+# Trigger this pipeline on every push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-and-scan:
+    name: Build, Test, and Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Pull the code onto the runner
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. Provision the exact Java version we need
+    - name: Set up Java 21 (Eclipse Temurin)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    # 3. Ensure the pipeline can execute the Maven wrapper
+    - name: Grant execute permission for mvnw
+      run: chmod +x mvnw
+
+    # 4. Compile the architecture and run all unit/integration tests
+    # Note: We use the release=21 flag just like we did locally
+    - name: Maven Build & Test Phase
+      run: ./mvnw clean package -pl bootstrap -am -Dmaven.compiler.release=21
+
+    # 5. Build the multi-stage JLink Docker container
+    - name: Build Production Micro-Image
+      run: docker build -t enterprise-storage-api:${{ github.sha }} .
+
+    # 6. DevSecOps: Container Vulnerability Scanning
+    # If a High or Critical vulnerability is found in our Alpine base image, 
+    # Trivy will exit with code 1 and instantly fail the pipeline.
+    - name: Run Trivy Vulnerability Scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'enterprise-storage-api:${{ github.sha }}'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    # 7. (Simulated) Push to Registry
+    # In a real environment, we would log into AWS ECR or Docker Hub here
+    - name: Pipeline Success - Artifact Ready
+      run: echo "Container successfully verified, scanned, and ready for Kubernetes deployment."
