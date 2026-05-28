@@ -7,8 +7,9 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
-        <relativePath/> </parent>
+        <version>3.5.14</version>
+        <relativePath/> 
+    </parent>
 
     <groupId>com.company</groupId>
     <artifactId>enterprise-api-parent</artifactId>
@@ -26,7 +27,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+        </properties>
 
     <dependencyManagement>
         <dependencies>
